@@ -3,8 +3,7 @@ Fork of https://github.com/moggieuk/ERCF-Software-V3
 everything on the ERCF-Software-V3 "Happy Hare" is there
 
 First Iteration of Cutter for ERCF-Software-V3 "Happy Hare" - get it to work
-# _State: absolutly untested at the moment, my first hardware design was a failure, i am working on a new one
-# not yet intended for use
+# State: absolutly untested at the moment, my first hardware design was a failure, i am working on a new one, not yet intended for use
 
 #NEW for users in comparison of ERCF-Software-V3 "Happy Hare" 30.04.2023
 ercf_parameters.cfg:
