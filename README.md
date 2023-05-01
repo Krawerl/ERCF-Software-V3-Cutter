@@ -5,7 +5,7 @@ everything on the ERCF-Software-V3 "Happy Hare" is there
 First Iteration of Cutter for ERCF-Software-V3 "Happy Hare" - get it to work
 # State: absolutly untested at the moment, my first hardware design was a failure, i am working on a new one, not yet intended for use
 
-##NEW for users in comparison of ERCF-Software-V3 "Happy Hare" 30.04.2023
+## NEW for users in comparison of ERCF-Software-V3 "Happy Hare" 30.04.2023  
 ercf_parameters.cfg:  
 cutter_enable: 0						# Cutter Disable = 0 , Enable = 1  
 cutter_sensor_calibration_length: 200	# similar to calibration_bowden_length for the cutter sensor  
@@ -26,7 +26,7 @@ MACROS:
 ERCF_CALIBRATE_CUTTER_HOME				# Cutter Sensor Homing Distance Calibration  
 ERCF_TEST_CUT							# Test cut of Tool = x (x default 0)  
 
-##Roadmap
+## Roadmap  
 <ul>
 <li>Test the software and new hardware (will be linked hear) and bugfix -> ready on 14.05.2023 22:00 UTC
 <li>Second Iteration plans: cut length configureable by tool/gate & code cleanup -> ready in July/August
