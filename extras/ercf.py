@@ -1,4 +1,4 @@
-/# Happy Hare ERCF Software
+# Happy Hare ERCF Software
 # Main module
 #
 # Copyright (C) 2022  moggieuk#6538 (discord)
@@ -91,8 +91,8 @@ class Ercf:
     LOADED_STATUS_PARTIAL_BEFORE_ENCODER = 1
     LOADED_STATUS_PARTIAL_PAST_ENCODER = 2
     LOADED_STATUS_PARTIAL_IN_BOWDEN = 3
-	LOADED_STATUS_PARTIAL_IN_CUTTER = 4
-	LOADED_STATUS_PARTIAL_END_OF_BOWDEN = 5
+    LOADED_STATUS_PARTIAL_IN_CUTTER = 4
+    LOADED_STATUS_PARTIAL_END_OF_BOWDEN = 5
     LOADED_STATUS_PARTIAL_HOMED_EXTRUDER = 6
     LOADED_STATUS_PARTIAL_HOMED_SENSOR = 7
     LOADED_STATUS_PARTIAL_IN_EXTRUDER = 8
@@ -134,7 +134,7 @@ class Ercf:
     VARS_ERCF_SWAP_STATISTICS        = "ercf_statistics_swaps"
 
     VARS_ERCF_CUTTER_SENSOR_CALIB_REF= "ercf_cutter_sensor_calib_ref"
-	VARS_ERCF_CUTTER_SENSOR_CALIB_VERSION= "ercf_cutter_sensor_calib_version"
+    VARS_ERCF_CUTTER_SENSOR_CALIB_VERSION= "ercf_cutter_sensor_calib_version"
 
     DEFAULT_ENCODER_RESOLUTION = 0.67 # 0.67 is about the resolution of one pulse
     EMPTY_GATE_STATS_ENTRY = {'pauses': 0, 'loads': 0, 'load_distance': 0.0, 'load_delta': 0.0, 'unloads': 0, 'unload_distance': 0.0, 'unload_delta': 0.0, 'servo_retries': 0, 'load_failures': 0, 'unload_failures': 0}
@@ -223,18 +223,18 @@ class Ercf:
         self.default_gate_color = list(config.getlist('gate_color', []))
         self.persistence_level = config.getint('persistence_level', 0, minval=0, maxval=4)
 
-		#new cutter parameters (optional)
-		self.cutter_enable = config.getint('cutter_enable', 0, minval=0, maxval=1)
-		self.cutter_sensor_calibration_length = config.getfloat('cutter_sensor_calibration_length', 0, minval=0)
-		self.cutter_blade_sensor = config.getfloat('cutter_blade_sensor', 30)
-		self.cutter_offcut_length = config.getfloat('cutter_offcut_length', 5, minval=2, maxval=15)
+        #new cutter parameters (optional)
+        self.cutter_enable = config.getint('cutter_enable', 0, minval=0, maxval=1)
+        self.cutter_sensor_calibration_length = config.getfloat('cutter_sensor_calibration_length', 0., minval=0.)
+        self.cutter_blade_sensor = config.getfloat('cutter_blade_sensor', 30)
+        self.cutter_offcut_length = config.getfloat('cutter_offcut_length', 5, minval=2, maxval=15)
         self.cutter_servo_down_angle = config.getfloat('cutter_servo_down_angle', 0)
         self.cutter_servo_up_angle = config.getfloat('cutter_servo_up_angle', 0)
-		self.cutter_servo_duration = config.getfloat('cutter_servo_duration', 0.2, minval=0.1)
+        self.cutter_servo_duration = config.getfloat('cutter_servo_duration', 0.2, minval=0.1)
         self.cutter_homing_step = config.getfloat('cutter_homing_step', 1., minval=0.5, maxval=5.)
         self.cutter_homing_max = config.getfloat('cutter_homing_max', 25., minval=0.)
-		self.cutter_stop_before_sensor = config.getfloat('cutter_stop_before_sensor', 5., minval=0.)
-
+        self.cutter_stop_before_sensor = config.getfloat('cutter_stop_before_sensor', 5., minval=0.)
+        
         # Logging
         self.log_level = config.getint('log_level', 1, minval=0, maxval=4)
         self.logfile_level = config.getint('logfile_level', 3, minval=-1, maxval=4)
@@ -320,7 +320,7 @@ class Ercf:
                     self.cmd_ERCF_STATUS,
                     desc = self.cmd_ERCF_STATUS_help)
 
-	# Calibration
+    # Calibration
         self.gcode.register_command('ERCF_CALIBRATE',
                     self.cmd_ERCF_CALIBRATE,
                     desc = self.cmd_ERCF_CALIBRATE_help)
@@ -360,7 +360,7 @@ class Ercf:
                     self.cmd_ERCF_CUTTER_SERVO_UP,
                     desc = self.cmd_ERCF_CUTTER_SERVO_UP_help)
 
-	# Core ERCF functionality
+    # Core ERCF functionality
         self.gcode.register_command('ERCF_ENABLE',
                     self.cmd_ERCF_ENABLE,
                     desc = self.cmd_ERCF_ENABLE_help)
@@ -407,16 +407,14 @@ class Ercf:
                     self.cmd_ERCF_RECOVER,
                     desc = self.cmd_ERCF_RECOVER_help)
 
-	# User Testing
+    # User Testing
         self.gcode.register_command('ERCF_TEST_GRIP',
                     self.cmd_ERCF_TEST_GRIP,
                     desc = self.cmd_ERCF_TEST_GRIP_help)
         self.gcode.register_command('ERCF_TEST_SERVO',
                     self.cmd_ERCF_TEST_SERVO,
                     desc = self.cmd_ERCF_TEST_SERVO_help)
-        self.gcode.register_command('ERCF_TEST_CUTTER_SERVO',
-                    self.cmd_ERCF_TEST_SERVO,
-                    desc = self.cmd_ERCF_TEST_CUTTER_SERVO_help)
+        self.gcode.register_command('ERCF_TEST_CUTTER_SERVO', self.cmd_ERCF_TEST_CUTTER_SERVO, desc = self.cmd_ERCF_TEST_CUTTER_SERVO_help)
         self.gcode.register_command('ERCF_TEST_MOVE_GEAR',
                     self.cmd_ERCF_TEST_MOVE_GEAR,
                     desc = self.cmd_ERCF_TEST_MOVE_GEAR_help)
@@ -440,7 +438,7 @@ class Ercf:
                     desc = self.cmd_ERCF_TEST_CONFIG_help)
         self.gcode.register_command('ERCF_TEST_CUT',
                     self.cmd_ERCF_TEST_CUT,
-                    desc = self.cmd_ERCF_TEST_CONFIG_help)
+                    desc = self.cmd_ERCF_TEST_CUT_help)
 
         # Runout, TTG and Endless spool
         self.gcode.register_command('_ERCF_ENCODER_RUNOUT',
@@ -533,10 +531,10 @@ class Ercf:
             raise self.config.error("Missing [ercf_encoder] definition in ercf_hardware.cfg\nDid you upgrade? Run Happy Hare './install.sh' again to fix configuration files and/or read https://github.com/moggieuk/ERCF-Software-V3")
 
         if self.cutter_enable:
-			try:
-				self.servo = self.printer.lookup_object('ercf_cutter_servo ercf_cutter_servo')
-			except:
-				raise self.config.error("Cutter is Enabled in ercf_parameters.cfg but missing [ercf_cutter_servo ercf_cutter_servo] definition in ercf_hardware.cfg")
+            try:
+                self.cutter_servo = self.printer.lookup_object('ercf_servo ercf_cutter_servo')
+            except:
+                raise self.config.error("Cutter is Enabled in ercf_parameters.cfg but missing [ercf_servo ercf_cutter_servo] definition in ercf_hardware.cfg")
             try:
                 self.cutter_sensor = self.printer.lookup_object("filament_switch_sensor cutter_sensor")
             except:
@@ -585,7 +583,7 @@ class Ercf:
         self._last_toolchange = "Unknown"
         self.gate_selected = self.GATE_UNKNOWN  # We keep record of gate selected in case user messes with mapping in print
         self.servo_state = self.SERVO_UNKNOWN_STATE
-		self.cutter_servo_state = self.SERVO_UNKNOWN_STATE
+        self.cutter_servo_state = self.SERVO_UNKNOWN_STATE
         self.loaded_status = self.LOADED_STATUS_UNKNOWN
         self.filament_direction = self.DIRECTION_LOAD
         self.action = self.ACTION_IDLE
@@ -707,7 +705,7 @@ class Ercf:
                 self._log_always(self._tool_to_gate_map_to_human_string(self.startup_status == 1))
                 self._display_visual_state(silent=(self.persistence_level < 4))
             self._servo_up()
-			self._cutter_servo_up()
+            self._cutter_servo_up()
         except Exception as e:
             self._log_always('Warning: Error booting up ERCF: %s' % str(e))
 
@@ -739,8 +737,8 @@ class Ercf:
                          "Unknown",
                 'cutter_servo': "Cutter DISABLED" if self.cutter_enable == 0 else
                                 "Up" if self.cutter_servo_state == self.SERVO_UP_STATE else
-								"Down" if self.cutter_servo_state == self.SERVO_DOWN_STATE else
-								"Unknown",
+                                "Down" if self.cutter_servo_state == self.SERVO_DOWN_STATE else
+                                "Unknown",
                 'ttg_map': list(self.tool_to_gate_map),
                 'gate_status': list(self.gate_status),
                 'gate_material': list(self.gate_material),
@@ -1333,66 +1331,39 @@ class Ercf:
             vmax = max(values)
         return {'mean': mean, 'stdev': stdev, 'min': vmin, 'max': vmax, 'range': vmax - vmin}
 
-    def _cutter_sensor_calibration_ref(self, cutter_sensor_homing_length=200, repeats=3)
+    def _cutter_sensor_calibration_ref(self, cutter_sensor_homing_length=200, repeats=3):
         try:
             self._log_always("Calibrating reference tool T0 for cutter sensor")
             self._select_tool(0)
             self._set_steps(1.)
-            reference_sum = spring_max = 0.
+            reference_sum = 0.
             successes = 0
             #self._set_above_min_temp() # no need for the extruder in this one
             for i in range(repeats):
                 self._servo_down()
                 self.encoder_sensor.reset_counts()    # Encoder 0000
                 encoder_moved = self._load_encoder(retry=False)
-                self._load_bowden(cutter_sensor_calibration_length - encoder_moved)
+                self._log_debug("Encoder loading done. Calling _load_bowden with length %d" % (self.cutter_sensor_calibration_length - encoder_moved))
+                self._load_bowden(self.cutter_sensor_calibration_length - encoder_moved)
                 self._log_info("Finding extruder gear position (try #%d of %d)..." % (i+1, repeats))
-                successes += self._cutter_home_cut(DIRECTION_LOAD, cutter_sensor_homing_length, False) # small steps until sensor is triggered
+                successes += self._cutter_home_cut(self.DIRECTION_LOAD, cutter_sensor_homing_length, False) # small steps until sensor is triggered
                 measured_movement = self.encoder_sensor.get_distance()
-                #spring = self._servo_up() # ignoring possible spring for now
-                #reference = measured_movement - (spring * 0.1)
-                #if spring > 0:
-                #    if self._must_home_to_extruder():
-                #        # Home to extruder step is enabled so we don't need any spring
-                #        # in filament since we will do it again on every load
-                #        reference = measured_movement - (spring * 1.0)
-                #    elif self.sync_load_length > 0:
-                #        # Synchronized load makes the transition from gear stepper to extruder stepper
-                #        # work reliably so we don't need spring tension in the bowden
-                #        if self._has_toolhead_sensor():
-                #            # We have a toolhead sensor so the extruder entrance isn't the reference
-                #            # homing point and therefore not critical to press against it. Relax tension
-                #            reference = measured_movement - (spring * 1.1)
-                #        else:
-                #            # We need a little bit of tension because sync load is more reliable in
-                #            # picking up filament but we still rely on the extruder as home point
-                #            reference = measured_movement - (spring * 0.5)
-                #
-                #    msg = "Pass #%d: Filament homed to extruder, encoder measured %.1fmm, " % (i+1, measured_movement)
-                #    msg += "filament sprung back %.1fmm" % spring
-                #    msg += "\n- Calibration reference based on this pass is %.1f" % reference
-                #    self._log_always(msg)
-                #    reference_sum += reference
-                #    spring_max = max(spring, spring_max)
-                #    successes += 1
-                #else:
-                #    # No spring means we haven't reliably homed
-                #    self._log_always("Failed to detect a reliable home position on this attempt")
-
+                self._log_info("Encoder distance to cutter sensor %d" % (measured_movement))
+                reference_sum += measured_movement
                 self.encoder_sensor.reset_counts()    # Encoder 0000
-                self._unload_bowden(reference - self.unload_buffer)
+                self._unload_bowden(measured_movement - self.unload_buffer)
                 self._unload_encoder(self.unload_buffer)
                 self._set_loaded_status(self.LOADED_STATUS_UNLOADED)
 
-            if successes > 0:
-                average_reference = reference_sum / successes
+            if successes == 3:
+                average_reference = reference_sum / 3
                 detection_length = (average_reference * 2) / 100 # + spring_max # 2% of bowden length plus spring seems to be good starting point # ignoring spring for now
-                msg = "Recommended cutter sensor position calibration reference is %.1fmm" % average_reference
+                self._log_always("Recommended cutter sensor position calibration reference is %.1fmm" % average_reference)
                 self.gcode.run_script_from_command("SAVE_VARIABLE VARIABLE=%s VALUE=%.1f" % (self.VARS_ERCF_CUTTER_SENSOR_CALIB_REF, average_reference))
                 self.gcode.run_script_from_command("SAVE_VARIABLE VARIABLE=%s VALUE=0.1" % self.VARS_ERCF_CUTTER_SENSOR_CALIB_VERSION)
                 self.encoder_sensor.set_clog_detection_length(detection_length)
             else:
-                self._log_always("All %d attempts at homing the cutter sensor failed. ERCF needs some adjustments!" % repeats)
+                self._log_always("Attempts at homing the cutter sensor failed. ERCF needs some adjustments!" % repeats)
         except ErcfError as ee:
             # Add some more context to the error and re-raise
             raise ErcfError("Calibration of cutter sensor position failed. Aborting, because:\n%s" % str(ee))
@@ -1976,32 +1947,34 @@ class Ercf:
 
     # Unload: move until sensor = !filament_present
     # Load (calibrate, cut_tip_standalone): move until sensor filament_present and move 1 step back so !filament_present
-    def _cutter_home_cut(self, direction=DIRECTION_UNLOAD, length=self.cutter_homing_max, cut=True):
+    def _cutter_home_cut(self, direction=-1, length=25, cut=True):
         # check if sensor is in the right state
-        if (direction = DIRECTION_UNLOAD and self.cutter_sensor.runout_helper.filament_present) or (direction = DIRECTION_LOAD and not self.cutter_sensor.runout_helper.filament_present):
+        if (direction == self.DIRECTION_UNLOAD and self.cutter_sensor.runout_helper.filament_present) or (direction == self.DIRECTION_LOAD and not self.cutter_sensor.runout_helper.filament_present):
+            success = False
             # move filamnt right before sensor
             for i in range(int(length / self.cutter_homing_step)):
                 msg = "Cutter Homing step #%d" % (i+1)
-                delta = self._trace_filament_move(msg, self.cutter_homing_step*direction, speed=10, motor="gears")
-                if direction = DIRECTION_UNLOAD and not self.cutter_sensor.runout_helper.filament_present:
-                    self._log_debug("Cutter sensor position reached after %.1fmm (%d moves)" % (step*(i+1), i+1))
+                delta = self._trace_filament_move(msg, self.cutter_homing_step*direction, 10, self.gear_stepper.accel, "gear", False, False)
+                if direction == self.DIRECTION_UNLOAD and not self.cutter_sensor.runout_helper.filament_present:
+                    self._log_debug("Cutter sensor position reached after %.1fmm (%d moves)" % (delta, i+1))
                     success = True
                     break
-                elif direction = DIRECTION_LOAD and self.cutter_sensor.runout_helper.filament_present:
-                    self._log_debug("Cutter sensor position reached after %.1fmm (%d moves)" % (step*(i+1), i+1))
-                    delta = self._trace_filament_move(msg, self.cutter_homing_step*DIRECTION_UNLOAD, speed=10, motor="gears")
+                elif direction == self.DIRECTION_LOAD and self.cutter_sensor.runout_helper.filament_present:
+                    self._log_debug("Cutter sensor position reached after %.1fmm (%d moves)" % (delta, i+1))
+                    delta = self._trace_filament_move(msg, self.cutter_homing_step*direction, 10, self.gear_stepper.accel, "gear", False, False)
                     success = True
                     break
 
-            if (success = False):
+            if (success == False):
                 raise ErcfError("Failed to reach cutter sensor after moving %.1fmm" % length)
                 return 0;
-        else
+        else:
             raise ErcfError("Filament in wrong position to initiat the cutter sensor homing, looks like encoder needs tuning.")
             return 0;
         if cut:
             # move to cutting position
-            self._unload_bowden(cutter_blade_sensor - cutter_offcut_length, skip_sync_move=True)
+            self._unload_bowden(self.cutter_blade_sensor - self.cutter_offcut_length, skip_sync_move=True)
+            self._log_always("Cutting of %.1fmm" % (self.cutter_offcut_length))
             self._cutter_servo_down()
             self._cutter_servo_up()
             return 2;
@@ -2310,23 +2283,23 @@ class Ercf:
             elif self.loaded_status >= self.LOADED_STATUS_PARTIAL_HOMED_SENSOR:
                 # Exit extruder, fast unload of bowden, then slow unload encoder
                 self._unload_extruder()
-                if cutter_enable:
-                    unloading_distance = length - self._get_cutter_sensor_calibration_ref() - cutter_stop_before_sensor
+                if self.cutter_enable:
+                    unloading_distance = length - self._get_cutter_sensor_calibration_ref() - self.cutter_stop_before_sensor
                     # fast unload near cutter sensor
                     self._unload_bowden(unloading_distance, skip_sync_move=skip_sync_move)
                     cutter_rtc = self._cutter_home_cut()
                     if cutter_rtc < 2:
                         raise ErcfError("Cutting filament was unsuccessful")
                     unloading_distance = self._get_cutter_sensor_calibration_ref() - self.cutter_blade_sensor - self.unload_buffer
-                    self._unload_bowden(unloading_distance, skip_sync_move=skip_sync_move)
+                    self._unload_bowden(unloading_distance, skip_sync_move=True)
                 else:
                     self._unload_bowden(length - self.unload_buffer, skip_sync_move=skip_sync_move)
                 self._unload_encoder(self.unload_buffer)
 
             elif self.loaded_status >= self.LOADED_STATUS_PARTIAL_HOMED_EXTRUDER:
                 # fast unload of bowden, then slow unload encoder
-                if cutter_enable:
-                    unloading_distance = length - self._get_cutter_sensor_calibration_ref() - cutter_stop_before_sensor
+                if self.cutter_enable:
+                    unloading_distance = length - self._get_cutter_sensor_calibration_ref() - self.cutter_stop_before_sensor
                     # fast unload near cutter sensor
                     self._unload_bowden(unloading_distance, skip_sync_move=skip_sync_move)
                     cutter_rtc = self._cutter_home_cut()
@@ -3063,6 +3036,15 @@ class Ercf:
         self._log_debug("Setting servo to angle: %d" % angle)
         self._servo_set_angle(angle)
 
+    cmd_ERCF_TEST_CUTTER_SERVO_help = "Test the cutter servo angle"
+    def cmd_ERCF_TEST_CUTTER_SERVO(self, gcmd):
+        if self._check_is_disabled(): return
+        if self._check_is_paused(): return
+        if self._check_in_bypass(): return
+        angle = gcmd.get_float('VALUE')
+        self._log_debug("Setting cutter servo to angle: %d" % angle)
+        self._cutter_servo_set_angle(angle)
+
     cmd_ERCF_TEST_MOVE_GEAR_help = "Move the ERCF gear"
     def cmd_ERCF_TEST_MOVE_GEAR(self, gcmd):
         if self._check_is_disabled(): return
@@ -3265,12 +3247,19 @@ class Ercf:
         if self._check_is_paused(): return
         if self._check_in_bypass(): return
         if self._check_is_loaded(): return
-        length = gcmd.get_int('TOOL', 0)
+        tool = gcmd.get_int('TOOL', 0)
         try:
-            self._select_tool(self, tool)
+            if self.is_homed == False:
+                self._home(tool)
+            else:
+                self._select_tool(tool)
             encoder_measured = self._load_encoder()
-            self._load_sequence(self._get_cutter_sensor_calibration_ref() + self.cutter_stop_before_sensor - encoder_measured, no_extruder=True)
+            self._load_sequence(self._get_cutter_sensor_calibration_ref() + self.cutter_stop_before_sensor +10 - encoder_measured, no_extruder=True)
             self._cutter_home_cut()
+            unloading_distance = self._get_cutter_sensor_calibration_ref() - self.cutter_blade_sensor - self.unload_buffer
+            self._unload_bowden(unloading_distance, skip_sync_move=True)
+            self._unload_encoder(self.unload_buffer)
+            self._servo_up()
         except ErcfError as ee:
             self._log_always("Cut test failed: %s" % str(ee))
 
