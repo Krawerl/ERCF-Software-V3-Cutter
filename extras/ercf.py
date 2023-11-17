@@ -1976,6 +1976,11 @@ class Ercf:
             self._unload_bowden(self.cutter_blade_sensor - self.cutter_offcut_length, skip_sync_move=True)
             self._log_always("Cutting of %.1fmm" % (self.cutter_offcut_length))
             self._cutter_servo_down()
+            if 1:
+                self._cutter_servo_set_angle(self.servo_down_angle - 10)
+                self._cutter_servo_down()
+                self._cutter_servo_set_angle(self.servo_down_angle -  5)
+                self._cutter_servo_down()
             self._cutter_servo_up()
             return 2;
         return 1;
