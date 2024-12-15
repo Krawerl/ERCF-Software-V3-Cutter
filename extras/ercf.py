@@ -202,6 +202,7 @@ class Ercf:
         self.toolhead_homing_step = config.getfloat('toolhead_homing_step', 1., minval=0.5, maxval=5.)
         self.sync_load_length = config.getfloat('sync_load_length', 8., minval=0., maxval=100.)
         self.sync_load_speed = config.getfloat('sync_load_speed', 10., minval=1., maxval=100.)
+        self.continuous_load_extruder = config.getint('continuous_load_extruder', 0, minval=0, maxval=1)
         self.sync_unload_length = config.getfloat('sync_unload_length', 10., minval=0., maxval=100.)
         self.sync_unload_speed = config.getfloat('sync_unload_speed', 10., minval=1., maxval=100.)
         self.delay_servo_release =config.getfloat('delay_servo_release', 2., minval=0., maxval=5.)
@@ -233,7 +234,7 @@ class Ercf:
         self.cutter_servo_duration = config.getfloat('cutter_servo_duration', 0.2, minval=0.1)
         self.cutter_homing_step = config.getfloat('cutter_homing_step', 1., minval=0.5, maxval=5.)
         self.cutter_homing_max = config.getfloat('cutter_homing_max', 25., minval=0.)
-        self.cutter_stop_before_sensor = config.getfloat('cutter_stop_before_sensor', 5., minval=0.)
+        self.cutter_stop_before_sensor = config.getfloat('cutter_stop_before_sensor', 5., minval=-20.)
         
         # Logging
         self.log_level = config.getint('log_level', 1, minval=0, maxval=4)
@@ -2196,6 +2197,8 @@ class Ercf:
 
             if self._has_toolhead_sensor():
                 # With toolhead sensor we must home filament first which performs extruder entry steps
+                if self.continuous_load_extruder:
+                    delta = self._trace_filament_move("Sync load move", self.sync_load_length, speed=self.sync_load_speed, motor="both")
                 self._home_to_toolhead_sensor(skip_entry_moves)
 
             length = self._get_home_position_to_nozzle()
@@ -2292,7 +2295,7 @@ class Ercf:
                     unloading_distance = length - self._get_cutter_sensor_calibration_ref() - self.cutter_stop_before_sensor
                     # fast unload near cutter sensor
                     self._unload_bowden(unloading_distance, skip_sync_move=skip_sync_move)
-                    cutter_rtc = self._cutter_home_cut()
+                    cutter_rtc = self._cutter_home_cut(self.DIRECTION_UNLOAD, self.cutter_homing_max, True)
                     if cutter_rtc < 2:
                         raise ErcfError("Cutting filament was unsuccessful")
                     unloading_distance = self._get_cutter_sensor_calibration_ref() - self.cutter_blade_sensor - self.unload_buffer
@@ -2307,7 +2310,7 @@ class Ercf:
                     unloading_distance = length - self._get_cutter_sensor_calibration_ref() - self.cutter_stop_before_sensor
                     # fast unload near cutter sensor
                     self._unload_bowden(unloading_distance, skip_sync_move=skip_sync_move)
-                    cutter_rtc = self._cutter_home_cut()
+                    cutter_rtc = self._cutter_home_cut(self.DIRECTION_UNLOAD, self.cutter_homing_max, True)
                     if cutter_rtc < 2:
                         raise ErcfError("Cutting filament was unsuccessful")
                     unloading_distance = self._get_cutter_sensor_calibration_ref() - self.cutter_blade_sensor - self.unload_buffer
@@ -3184,6 +3187,7 @@ class Ercf:
         self.extruder_form_tip_current = gcmd.get_int('EXTRUDER_FORM_TIP_CURRENT', self.extruder_form_tip_current, minval=100, maxval=150)
         self.delay_servo_release = gcmd.get_float('DELAY_SERVO_RELEASE', self.delay_servo_release, minval=0., maxval=5.)
         self.sync_load_length = gcmd.get_float('SYNC_LOAD_LENGTH', self.sync_load_length, minval=0., maxval=100.)
+        self.continuous_load_extruder = gcmd.get_int('CONTINUOUS_LOAD_EXTRUDER', self.continuous_load_extruder, minval=0, maxval=1)
         self.sync_load_speed = gcmd.get_float('SYNC_LOAD_SPEED', self.sync_load_speed, minval=1., maxval=100.)
         self.sync_unload_length = gcmd.get_float('SYNC_UNLOAD_LENGTH', self.sync_unload_length, minval=0., maxval=100.)
         self.sync_unload_speed = gcmd.get_float('SYNC_UNLOAD_SPEED', self.sync_unload_speed, minval=1., maxval=100.)
@@ -3220,6 +3224,7 @@ class Ercf:
         msg += "\nextruder_form_tip_current = %d" % self.extruder_form_tip_current
         msg += "\ndelay_servo_release = %.1f" % self.delay_servo_release
         msg += "\nsync_load_length = %.1f" % self.sync_load_length
+        msg += "\ncontinuous_load_extruder = %.1d" % self.continuous_load_extruder
         msg += "\nsync_load_speed = %.1f" % self.sync_load_speed
         msg += "\nsync_unload_length = %.1f" % self.sync_unload_length
         msg += "\nsync_unload_speed = %.1f" % self.sync_unload_speed
@@ -3260,7 +3265,7 @@ class Ercf:
                 self._select_tool(tool)
             encoder_measured = self._load_encoder()
             self._load_sequence(self._get_cutter_sensor_calibration_ref() + self.cutter_stop_before_sensor +10 - encoder_measured, no_extruder=True)
-            self._cutter_home_cut()
+            self._cutter_home_cut(self.DIRECTION_UNLOAD, self.cutter_homing_max, True)
             unloading_distance = self._get_cutter_sensor_calibration_ref() - self.cutter_blade_sensor - self.unload_buffer
             self._unload_bowden(unloading_distance, skip_sync_move=True)
             self._unload_encoder(self.unload_buffer)
